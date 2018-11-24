@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
+import Moment from 'moment'
 
 class TotalPaymentTable extends Component {
-    constructor(props){
-        console.log(props.result)
-        super(props)
-        this.state = {
-            items: props.result || []
+
+    formatTrashData(the_sause){
+        const items = []
+        for(const x in the_sause){
+            items.push({
+                id: x,
+                nickname: the_sause[x].NickName,
+                owed: Moment.duration(the_sause[x].ConnectionTime).asMinutes()
+            })
         }
+        return items
     }
 
     render() {
-        console.log(this.state.items)
+        console.log(this.props)
         return (
             <table className="table table-bordered">
                 <thead>
@@ -22,7 +28,7 @@ class TotalPaymentTable extends Component {
                 </thead>
                 <tbody>
                     {
-                        this.state.items.map((item, i) => (
+                        this.formatTrashData(this.props.result).map((item, i) => (
                             <tr key={'item-row-'+i}>
                                 <td>{i + 1}</td>
                                 <td>{item.nickname}</td>

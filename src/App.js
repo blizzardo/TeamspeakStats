@@ -8,7 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      result: null
+      result: []
     }
   }
 
@@ -19,7 +19,6 @@ class App extends Component {
         this.setState({
           result: body
         })
-        console.log(this.state)
       })
     })
   }
@@ -35,7 +34,7 @@ class App extends Component {
         <div className="container">
           <div className="row">
             <div className="col">
-              <TotalPaymentTable onChange={this.state.result}/>
+              <TotalPaymentTable result={this.state.result}/>
             </div>
           </div>
         </div>
