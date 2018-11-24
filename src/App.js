@@ -1,15 +1,44 @@
 import React, { Component } from 'react';
+import Header from './components/Header'
+import Config from './config'
+import TotalPaymentTable from './components/TotalPaymentTable'
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      result: null
+    }
+  }
+
+  hitThatApi() {
+    const url = 'https://teamspeakgetstats.azurewebsites.net/api/stats?code=' + Config.secretKey
+    fetch(url).then((data) => {
+      data.json().then((body) => {
+        this.setState({
+          result: body
+        })
+        console.log(this.state)
+      })
+    })
+  }
+
+  componentDidMount() {
+    this.hitThatApi()
+  }
+
   render() {
     return (
       <div className="App">
-        <nav class="navbar navbar-dark bg-dark">
-          <a class="navbar-brand" href="#">Teamspeak Stats</a>
-        </nav>
-          <div class="container">
-            
+        <Header/>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <TotalPaymentTable onChange={this.state.result}/>
+            </div>
           </div>
+        </div>
       </div>
     );
   }
