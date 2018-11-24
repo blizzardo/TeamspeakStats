@@ -13,7 +13,7 @@ class App extends Component {
   }
 
   hitThatApi() {
-    const url = 'https://teamspeakgetstats.azurewebsites.net/api/stats?code=' + Config.secretKey
+    const url = 'https://teamspeakgetstats.azurewebsites.net/api/stats/user?code=' + Config.secretKey
     fetch(url).then((data) => {
       data.json().then((body) => {
         this.setState({
@@ -34,6 +34,7 @@ class App extends Component {
         <div className="container">
           <div className="row">
             <div className="col">
+              <h1>Tax Collection</h1>
               <TotalPaymentTable result={this.state.result}/>
             </div>
           </div>

@@ -3,16 +3,26 @@ import Moment from 'moment'
 
 class TotalPaymentTable extends Component {
 
+    teamspeakCost = 50
+
     formatTrashData(the_sause){
         const items = []
+        let totalConnection = 0
         for(const x in the_sause){
+            const minuteConnectionTime = Moment.duration(the_sause[x].ConnectionTime).asMinutes()
+            totalConnection += minuteConnectionTime
+        }
+
+        for(const x in the_sause){
+            const minuteConnectionTime = Moment.duration(the_sause[x].ConnectionTime).asMinutes()
             items.push({
                 id: x,
                 nickname: the_sause[x].NickName,
-                owed: Moment.duration(the_sause[x].ConnectionTime).asMinutes()
+                owed: ((minuteConnectionTime/totalConnection)*this.teamspeakCost).toFixed(2)
             })
         }
-        return items
+
+        return items.sort((a, b) => a.owed.localeCompare(b.owed)).reverse()
     }
 
     render() {
