@@ -3,52 +3,78 @@ import Moment from 'moment'
 
 class TotalPaymentTable extends Component {
 
+    awards = ["🥇", "🥈", "🥉"]
     teamspeakCost = 50
 
-    formatTrashData(the_sause){
+    responseObjectToTableMapping(raw_response){
+        console.log(raw_response)
         const items = []
         let totalConnection = 0
-        for(const x in the_sause){
-            const minuteConnectionTime = Moment.duration(the_sause[x].ConnectionTime).asMinutes()
+        for(const x in raw_response){
+            const minuteConnectionTime = Moment.duration(raw_response[x].Value.ConnectionTime).asMinutes()
             totalConnection += minuteConnectionTime
         }
 
-        for(const x in the_sause){
-            const minuteConnectionTime = Moment.duration(the_sause[x].ConnectionTime).asMinutes()
+        for(const x in raw_response){
+            const minuteConnectionTime = Moment.duration(raw_response[x].Value.ConnectionTime).asMinutes()
             items.push({
                 id: x,
-                nickname: the_sause[x].NickName,
-                owed: ((minuteConnectionTime/totalConnection)*this.teamspeakCost).toFixed(2)
+                nickname: raw_response[x].Value.NickName,
+                owed: ((minuteConnectionTime/totalConnection) * this.teamspeakCost).toFixed(2)
             })
         }
 
-        return items.sort((a, b) => a.owed.localeCompare(b.owed)).reverse()
+        return items
     }
 
     render() {
-        console.log(this.props)
-        return (
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nickname</th>
-                        <th scope="col">Monies Owed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.formatTrashData(this.props.result).map((item, i) => (
-                            <tr key={'item-row-'+i}>
-                                <td>{i + 1}</td>
-                                <td>{item.nickname}</td>
-                                <td>£{item.owed}</td>
+        const formattedData = this.responseObjectToTableMapping(this.props.response)
+        if(!formattedData){
+            return (<div></div>)
+        }
+        if(formattedData.length > 0) {
+            return (
+                <div className="leaderBoard">
+                    <table className="table bg-light">
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Owed</th>
                             </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
-        )
+                        </thead>
+                        <tbody>
+                            {
+                                
+                                formattedData.map((item, i) => {
+                                    if(i < 3) {
+                                        return (
+                                            <tr key={'item-row-'+i}>
+                                                <td>{this.awards[i]}</td>
+                                                <td>{item.nickname}</td>
+                                                <td>£{item.owed}</td>
+                                            </tr>
+                                        )
+                                    } else {
+                                        return (
+                                            <tr key={'item-row-'+i}>
+                                                <td>{'#' + (i + 1)}</td>
+                                                <td>{item.nickname}</td>
+                                                <td>£{item.owed}</td>
+                                            </tr>
+                                        )
+                                    }
+                                    
+                                    
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+
+        return (<p>Loading</p>)
     }
 }
 
