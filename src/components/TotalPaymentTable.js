@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Moment from 'moment'
+import TableItem from './TableItem'
 
 class TotalPaymentTable extends Component {
 
@@ -7,74 +8,62 @@ class TotalPaymentTable extends Component {
     teamspeakCost = 50
 
     responseObjectToTableMapping(raw_response){
-        console.log(raw_response)
         const items = []
         let totalConnection = 0
         for(const x in raw_response){
-            const minuteConnectionTime = Moment.duration(raw_response[x].Value.ConnectionTime).asMinutes()
+            const connectionTime = Moment.duration(raw_response[x].Value.ConnectionTime)
+            const minuteConnectionTime = connectionTime.asMinutes()
             totalConnection += minuteConnectionTime
         }
 
         for(const x in raw_response){
-            const minuteConnectionTime = Moment.duration(raw_response[x].Value.ConnectionTime).asMinutes()
+            const connectionTime = Moment.duration(raw_response[x].Value.ConnectionTime)
+            const minuteConnectionTime = connectionTime.asMinutes()
+
             items.push({
                 id: x,
                 nickname: raw_response[x].Value.NickName,
-                owed: ((minuteConnectionTime/totalConnection) * this.teamspeakCost).toFixed(2)
+                total_time: this.formatConnectionString(connectionTime),
+                owed: ((minuteConnectionTime/totalConnection) * this.teamspeakCost).toFixed(2),
+                platform: raw_response[x].Value.LatestPlatform
             })
         }
 
         return items
     }
 
-    render() {
-        const formattedData = this.responseObjectToTableMapping(this.props.response)
-        if(!formattedData){
-            return (<div></div>)
-        }
-        if(formattedData.length > 0) {
-            return (
-                <div className="leaderBoard">
-                    <table className="table bg-light">
-                        <thead>
-                            <tr>
-                                <th scope="col">Rank</th>
-                                <th scope="col">User</th>
-                                <th scope="col">Owed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                
-                                formattedData.map((item, i) => {
-                                    if(i < 3) {
-                                        return (
-                                            <tr key={'item-row-'+i}>
-                                                <td>{this.awards[i]}</td>
-                                                <td>{item.nickname}</td>
-                                                <td>£{item.owed}</td>
-                                            </tr>
-                                        )
-                                    } else {
-                                        return (
-                                            <tr key={'item-row-'+i}>
-                                                <td>{'#' + (i + 1)}</td>
-                                                <td>{item.nickname}</td>
-                                                <td>£{item.owed}</td>
-                                            </tr>
-                                        )
-                                    }
-                                    
-                                    
-                                })
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            )
-        }
+    formatConnectionString(connectionTime) {
+        const days = connectionTime.days()
+        const hours = connectionTime.hours()
+        const minutes = connectionTime.minutes()
 
-        return (<p>Loading</p>)
+        let connectionTimeDisplay = ''
+        if(days !== 0) connectionTimeDisplay += days + ((days === 1) ? ' Day, ' : ' Days, ')
+        if(hours !== 0) connectionTimeDisplay += hours + ((hours === 1) ? ' Hour, ' : ' Hours, ')
+        if(minutes !== 0) connectionTimeDisplay += minutes + ((minutes === 1) ? ' Minute' : ' Minutes')
+
+        return connectionTimeDisplay
+    }
+
+    render() {
+        const rows = this.responseObjectToTableMapping(this.props.user_api_response)
+        const render_rows = rows.map(item => <TableItem
+            key={'TableItem-' + item.id}
+            rank={this.awards[item.id] || '#' + item.id}
+            item={item}/>)
+        return (
+            <table className="table">
+                <thead><tr>
+                    <th>Rank</th>
+                    <th>Nickname</th>
+                    <th>Connection Hours</th>
+                    <th>Owed</th>
+                </tr></thead>
+                <tbody>
+                    {render_rows}
+                </tbody>
+            </table>
+        )
     }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 const Dropdown = () => {
     return (
-        <select class="form-control">
+        <select className="form-control">
             <option value="one">One</option>
             <option value="two">Two</option>
             <option value="three">Three</option>
