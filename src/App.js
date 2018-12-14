@@ -3,7 +3,6 @@ import Header from './components/Header'
 import Config from './config'
 import TotalPaymentTable from './components/TotalPaymentTable'
 import TotalCard from './components/TotalCard'
-import Dropdown from './components/Dropdown'
 
 class App extends Component {
 

@@ -1,0 +1,22 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+.table {
+    display: table;
+  }
+.table-row {
+    display: table-row;
+    font-size: 1em;
+}
+.table-header {
+    display: table-row;
+    font-size: 1.5em;
+}
+.table-cell {
+    display: table-cell;
+    padding: 10px;
+    text-align: center;
+}
+.table-row:nth-child(even) {
+    background: rgba(0, 0, 0, 0.082);
+}
